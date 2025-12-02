@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cuaca Semarang Pro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .weather-card {
+            /* Warna background diambil dinamis dari Java! */
+            background: [[${data.cardColor}]];
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 350px;
+            color: white;
+            transition: all 0.5s ease;
+        }
+        .history-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            width: 250px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        h1, h2 { margin: 5px 0; text-shadow: 1px 1px 5px rgba(0,0,0,0.2); }
+        .temp { font-size: 4.5em; font-weight: 800; margin: 10px 0; }
+        .recommendation {
+            background: rgba(255,255,255,0.3);
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .details {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        select, button {
+            padding: 12px; border-radius: 8px; border: none; font-weight: bold;
+        }
+        button { background-color: #333; color: white; cursor: pointer; }
+        button:hover { background-color: #000; }
+
+        /* List History Style */
+        ul { list-style: none; padding: 0; }
+        li { padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="weather-card" th:style="'background: ' + ${data.cardColor}">
+        <h2 th:text="${lokasi}">Lokasi</h2>
+        <p th:text="${data.condition}" style="font-size: 1.2em;">Kondisi</p>
+
+        <div class="temp">
+            <span th:text="${data.temperature}">0</span>°
+        </div>
+
+        <div class="recommendation">
+            <span th:text="${data.recommendation}">Saran muncul disini</span>
+        </div>
+
+        <div class="details">
+            <div>
+                <small>Angin 💨</small><br>
+                <strong th:text="${data.windSpeed} + ' km/h'">0</strong>
+            </div>
+            <div>
+                <small>Lembab 💧</small><br>
+                <strong th:text="${data.humidity} + '%'">0</strong>
+            </div>
+        </div>
+
+        <form action="/cuaca" method="get">
+            <select name="lokasi" style="margin-bottom: 10px; width: 100%;">
+                <option value="semarang_tengah">Semarang Tengah</option>
+                <option value="banyumanik">Banyumanik</option>
+                <option value="gunungpati">Gunungpati</option>
+                <option value="tembalang">Tembalang</option>
+            </select>
+
+            <br>
+
+            <select name="sumber" style="margin-bottom: 10px; width: 100%;">
+                <option value="openmeteo" th:selected="${pilihanSumber == 'openmeteo'}">Sumber: Open-Meteo (Intl)</option>
+                <option value="bmkg" th:selected="${pilihanSumber == 'bmkg'}">Sumber: BMKG (Lokal)</option>
+            </select>
+
+            <button type="submit" style="width: 100%;">Cek Cuaca</button>
+        </form>
+    </div>
+
+    <div class="history-card">
+        <h3>🕒 Terakhir Dilihat</h3>
+        <ul>
+            <li th:each="item : ${riwayat}" th:text="${item}">History 1</li>
+        </ul>
+        <p th:if="${riwayat.empty}" style="color: #999; font-style: italic;">Belum ada pencarian.</p>
+    </div>
+</div>
+
+</body>
+</html>
